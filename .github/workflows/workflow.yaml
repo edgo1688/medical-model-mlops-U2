@@ -13,6 +13,7 @@ jobs:
     steps:
     # Comentario inicial en el PR
     - name: Comment PR - Start
+      if: github.event_name == 'pull_request'
       uses: thollander/actions-comment-pull-request@v2
       with:
         message: |
@@ -47,7 +48,7 @@ jobs:
     
     # Comentario final de éxito
     - name: Comment PR - Success
-      if: success()
+      if: success() && github.event_name == 'pull_request'
       uses: thollander/actions-comment-pull-request@v2
       with:
         message: |
@@ -64,7 +65,7 @@ jobs:
     
     # Comentario final de fallo
     - name: Comment PR - Failure
-      if: failure()
+      if: failure() && github.event_name == 'pull_request'
       uses: thollander/actions-comment-pull-request@v2
       with:
         message: |
