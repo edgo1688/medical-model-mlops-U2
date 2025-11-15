@@ -23,7 +23,7 @@ jobs:
           - ✅ Instalación de dependencias
           - ✅ Ejecución de pruebas unitarias
           - ✅ Verificación de funcionalidad de endpoints
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     
     # Checkout del código
     - uses: actions/checkout@v4
@@ -60,7 +60,7 @@ jobs:
           - ✅ Sistema de estadísticas verificado
           
           🎉 El código está listo para ser integrado a la rama main.
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     
     # Comentario final de fallo
     - name: Comment PR - Failure
@@ -76,7 +76,7 @@ jobs:
           - Corrige los errores antes de hacer merge a main
           
           🔧 Por favor, revisa el código y ejecuta las pruebas localmente antes de hacer push.
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
   # Job para deploy cuando se hace push/merge a main
   deploy:
@@ -117,7 +117,7 @@ jobs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.GH_TOKEN }}
     
     # Construir y publicar imagen Docker
     - name: Build and push Docker image
