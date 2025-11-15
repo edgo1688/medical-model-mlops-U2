@@ -1,54 +1,130 @@
-# 🧬 Medical Model
+# 🩺 Servicio Médico en Docker – Predicción de Estado de Enfermedad
 
-## 📌 Problema
+## 📘 Descripción General
 
-En entornos clínicos y de investigación es común necesitar un sistema
-que permita **procesar, analizar o predecir información médica** de
-forma automatizada. Sin embargo, estos procesos suelen requerir
-configuraciones complejas, dependencias específicas y un entorno
-controlado para ejecutarse correctamente.
+Este proyecto implementa un **servicio web en Docker** que simula el comportamiento de un modelo de Machine Learning para diagnóstico médico.
 
-## 🎯 Propósito del proyecto
+El sistema permite que un médico ingrese **tres valores numéricos** (por ejemplo, resultados clínicos o síntomas cuantificados) y reciba uno de los siguientes posibles diagnósticos:
 
-Este repositorio busca ofrecer una solución sencilla y reproducible que
-permita:
+- `NO ENFERMO`
+- `ENFERMEDAD LEVE`
+- `ENFERMEDAD AGUDA`
+- `ENFERMEDAD CRÓNICA`
 
--   Ejecutar un **modelo médico empaquetado en Docker**.
--   Proveer un punto de acceso simple mediante una API expuesta en un
-    contenedor.
--   Asegurar que cualquier persona pueda correr el sistema sin problemas
-    de instalación o configuración.
+> ⚠️ **Nota:** Este modelo **no realiza diagnósticos reales**. Su propósito es **demostrar la construcción y despliegue de un servicio en Docker**.
 
-En resumen: **hacer fácil la ejecución de un modelo médico mediante
-Docker**.
+---
 
-## 📂 Estructura del repositorio
+## 📂 Estructura del Proyecto
 
-    medical-model/
-    ├── Dockerfile            # Instrucciones para construir la imagen Docker del modelo
-    ├── requirements.txt      # Dependencias del proyecto (si es una app Python)
-    ├── app.py
-    ├── README.md             # Documentación del repositorio
+```
+mlops-medical-service/
+│
+├── app.py                # Código principal del servicio Flask
+├── Dockerfile            # Archivo de construcción de la imagen Docker
+├── requirements.txt      # Dependencias del proyecto
+└── README.md             # Instrucciones de uso
+```
 
-## 🚀 Cómo ejecutar el proyecto
+---
 
-Construir la imagen:
+## ⚙️ Requisitos Previos
 
-``` bash
+Antes de comenzar, asegúrate de tener instalado:
+
+- [Docker](https://www.docker.com/get-started)  
+- (Opcional) `curl` o un cliente para probar APIs
+
+---
+
+## 🚀 Construcción y Ejecución
+
+### 🔹 Paso 1. Construir la imagen
+
+Desde el directorio raíz del proyecto:
+
+```bash
 docker build -t medical-model .
 ```
 
-Ejecutar el contenedor:
+### 🔹 Paso 2. Ejecutar el contenedor
 
-``` bash
-docker run -d -p 5001:5001 medical-model
+```bash
+docker run -d -p 5000:5000 medical-model
 ```
 
-Una vez corriendo, podrás acceder a la API (por ejemplo):
+Esto iniciará el servicio web en el puerto **5000**.
 
-    http://localhost:5001
+---
 
-## 🤝 Contribuciones
+## 💻 Uso del Servicio
 
-Las contribuciones son bienvenidas. Abre un *issue* o un *pull request*
-si deseas mejorar el proyecto.
+### 🧠 Opción 1: Interfaz Web
+
+Abre tu navegador y visita:  
+👉 [http://localhost:5000](http://localhost:5000)
+
+Allí podrás ingresar tres valores numéricos (por ejemplo, `2.5`, `6.3`, `8.0`) y obtener un resultado de diagnóstico simulado.
+
+---
+
+### 🧩 Opción 2: API REST (JSON)
+
+También puedes enviar los datos mediante una solicitud `POST` al endpoint `/api/predict`.
+
+#### Ejemplo usando `curl`:
+
+```bash
+curl -X POST http://localhost:5000/api/predict      -H "Content-Type: application/json"      -d '{"values": [5.2, 7.1, 6.3]}'
+```
+
+#### Respuesta esperada:
+
+```json
+{"prediction": "ENFERMEDAD AGUDA"}
+```
+
+---
+
+## 🧱 Descripción de Archivos
+
+### `app.py`
+Contiene el código principal del servicio Flask y una función llamada `predict_disease()` que simula el modelo.  
+El diagnóstico se determina promediando los tres valores ingresados y clasificando el resultado según su magnitud.
+
+### `Dockerfile`
+Define la imagen de Docker que instala dependencias, copia los archivos y lanza la aplicación.
+
+### `requirements.txt`
+Lista las dependencias necesarias del proyecto (por ahora solo Flask).
+
+---
+
+## 🩺 Lógica de Clasificación Simulada
+
+| Promedio de valores | Diagnóstico retornado |
+|----------------------|-----------------------|
+| < 3                 | `NO ENFERMO`          |
+| 3 ≤ x < 6           | `ENFERMEDAD LEVE`     |
+| 6 ≤ x < 8           | `ENFERMEDAD AGUDA`    |
+| ≥ 8                 | `ENFERMEDAD CRÓNICA`  |
+
+---
+
+## 🧩 Posibles Extensiones
+
+- Conectar el servicio con un modelo real de ML entrenado (archivo `.pkl` o `.onnx`).
+- Implementar autenticación para acceso médico.
+- Guardar registros de consultas en una base de datos.
+- Desplegar el servicio con Docker Compose o en Kubernetes.
+
+---
+
+## 🧠 Conclusión
+
+Este proyecto demuestra cómo **empaquetar un servicio de predicción médica simulado** dentro de una imagen Docker, permitiendo que cualquier médico o usuario pueda **ejecutarlo localmente** sin necesidad de configurar entornos de desarrollo.
+
+---
+
+**Autor:**  
+Edwin Gómez
