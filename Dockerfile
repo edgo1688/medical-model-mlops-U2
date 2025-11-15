@@ -2,7 +2,7 @@
 FROM python:3.10-slim
 
 # Directorio de trabajo
-WORKDIR /app
+WORKDIR .
 
 # Copiar archivos del proyecto
 COPY requirements.txt .
@@ -12,7 +12,7 @@ COPY app.py .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Exponer el puerto de Flask
-EXPOSE 5000
+EXPOSE 5001
 
 # Comando para ejecutar el servicio
 CMD ["python", "app.py"]
