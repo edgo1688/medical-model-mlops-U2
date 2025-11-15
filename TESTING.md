@@ -29,8 +29,11 @@ Este proyecto incluye un sistema completo de **pruebas unitarias** y **CI/CD con
 
 #### **Workflow Configurado** (`.github/workflows/workflow.yaml`):
 
-**Trigger:** Pull Requests hacia la rama `main`
+**Triggers:** 
+- Pull Requests hacia la rama `main`
+- Push/Merge hacia la rama `main`
 
+#### **Job 1: Test (Pull Requests)**
 **Pasos del Pipeline:**
 1. **Comentario Inicial** - "CI/CD en acción. Ejecutando tareas..."
 2. **Checkout del Código** - Obtiene el código del PR
@@ -39,6 +42,17 @@ Este proyecto incluye un sistema completo de **pruebas unitarias** y **CI/CD con
 5. **Ejecución de Pruebas** - Ejecuta todas las 15 pruebas unitarias
 6. **Comentario de Éxito** - "CI/CD terminado con éxito." (si pasan todas las pruebas)
 7. **Comentario de Fallo** - Mensaje de error (si fallan las pruebas)
+
+#### **Job 2: Deploy (Push/Merge a Main)**
+**Pasos del Pipeline de Despliegue:**
+1. **Checkout del Código** - Obtiene el código de main
+2. **Setup Python 3.9** - Configura el entorno Python
+3. **Instalación de Dependencias** - Instala dependencias
+4. **Pruebas Finales** - Verificación final en rama main
+5. **Setup Docker Buildx** - Configura Docker para construcción
+6. **Login a GHCR** - Autenticación en GitHub Container Registry
+7. **Build & Push** - Construye y publica imagen Docker
+8. **Notificación** - Confirma despliegue exitoso
 
 ### 📊 Cobertura de Pruebas
 
@@ -69,13 +83,33 @@ pytest==7.4.3
 pytest-flask==1.3.0
 ```
 
-### 📈 Beneficios del Sistema CI/CD
+### � Imágenes Docker Automatizadas
+
+Cada vez que se hace merge a `main`, se publican automáticamente dos versiones de la imagen:
+
+- **`ghcr.io/edgo1688/medical-model-mlops-u2:latest`** - Última versión estable
+- **`ghcr.io/edgo1688/medical-model-mlops-u2:<commit-sha>`** - Versión específica por commit
+
+#### **Usar la Imagen:**
+```bash
+# Última versión
+docker pull ghcr.io/edgo1688/medical-model-mlops-u2:latest
+docker run -p 5001:5001 ghcr.io/edgo1688/medical-model-mlops-u2:latest
+
+# Versión específica
+docker pull ghcr.io/edgo1688/medical-model-mlops-u2:<commit-sha>
+docker run -p 5001:5001 ghcr.io/edgo1688/medical-model-mlops-u2:<commit-sha>
+```
+
+### �📈 Beneficios del Sistema CI/CD
 
 1. **Calidad Garantizada** - No se puede hacer merge sin pasar las pruebas
 2. **Feedback Inmediato** - Comentarios automáticos en PRs
 3. **Prevención de Bugs** - Detección temprana de problemas
 4. **Confianza en Despliegues** - Código validado antes de producción
 5. **Documentación Automática** - Resultados visibles en cada PR
+6. **Despliegue Automático** - Imágenes Docker publicadas automáticamente
+7. **Versionado Automático** - Cada commit tiene su imagen específica
 
 ---
 
