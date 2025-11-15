@@ -50,7 +50,7 @@ El sistema permite que un médico ingrese **tres valores médicos específicos**
 El repositorio está organizado de manera simple y eficiente para facilitar el desarrollo, mantenimiento y despliegue:
 
 ```
-firstapp/
+medical-model-mlops-U2/
 │
 ├── app.py                # 🐍 Aplicación principal Flask con lógica de negocio
 ├── Dockerfile            # 🐳 Configuración para construcción de imagen Docker
