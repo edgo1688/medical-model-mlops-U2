@@ -219,6 +219,46 @@ docker run -d -p 5001:5001 medical-model
 
 Esto iniciará el servicio web en el puerto **5001**.
 
+### 🔹 Opción 3. Usar imagen pre-construida (Recomendado)
+
+Gracias al sistema de CI/CD automático, cada merge a `main` publica una nueva imagen lista para usar:
+
+```bash
+# Usar la última versión estable
+docker pull ghcr.io/edgo1688/medical-model-mlops-u2:latest
+docker run -d -p 5001:5001 ghcr.io/edgo1688/medical-model-mlops-u2:latest
+
+# O usar una versión específica
+docker pull ghcr.io/edgo1688/medical-model-mlops-u2:<commit-sha>
+docker run -d -p 5001:5001 ghcr.io/edgo1688/medical-model-mlops-u2:<commit-sha>
+```
+
+**Ventajas de usar la imagen pre-construida:**
+- ✅ No necesitas construir localmente
+- ✅ Imagen ya probada y validada
+- ✅ Siempre la última versión estable
+- ✅ Construcción optimizada y sin errores
+
+---
+
+## 🤖 Sistema de CI/CD Automático
+
+Este proyecto incluye un **sistema de integración y despliegue continuo** completamente automatizado:
+
+### 📋 **En Pull Requests:**
+- 🧪 Ejecución automática de 15 pruebas unitarias
+- 💬 Comentarios automáticos con el progreso
+- ✅ Bloqueo de merge si las pruebas fallan
+- 📊 Reporte detallado de resultados
+
+### 🚀 **En Merge a Main:**
+- 🔄 Verificación final con pruebas completas
+- 🐳 Construcción automática de imagen Docker
+- 📦 Publicación en GitHub Container Registry
+- 🏷️ Versionado automático con tags `latest` y por commit
+
+**Acceso a las imágenes:** [GitHub Packages](https://github.com/edgo1688/medical-model-mlops-u2/pkgs/container/medical-model-mlops-u2)
+
 ---
 
 ## 💻 Uso del Servicio

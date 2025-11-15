@@ -1,0 +1,146 @@
+name: CI/CD Medical Model Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Comentario inicial en el PR
+    - name: Comment PR - Start
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        message: |
+          🚀 **CI/CD en acción. Ejecutando tareas...** 
+          
+          Se están ejecutando las siguientes verificaciones:
+          - ✅ Configuración de entorno Python
+          - ✅ Instalación de dependencias
+          - ✅ Ejecución de pruebas unitarias
+          - ✅ Verificación de funcionalidad de endpoints
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Checkout del código
+    - uses: actions/checkout@v4
+    
+    # Configurar Python
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    # Instalar dependencias
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # Ejecutar las pruebas
+    - name: Run tests with pytest
+      run: |
+        pytest test_app.py -v --tb=short
+    
+    # Comentario final de éxito
+    - name: Comment PR - Success
+      if: success()
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        message: |
+          ✅ **CI/CD terminado con éxito.**
+          
+          📊 **Resumen de resultados:**
+          - ✅ Todas las pruebas unitarias pasaron correctamente
+          - ✅ Endpoints de API funcionando correctamente
+          - ✅ Lógica de predicción médica validada
+          - ✅ Sistema de estadísticas verificado
+          
+          🎉 El código está listo para ser integrado a la rama main.
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Comentario final de fallo
+    - name: Comment PR - Failure
+      if: failure()
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        message: |
+          ❌ **CI/CD terminado con errores.**
+          
+          💥 **Se encontraron problemas:**
+          - Las pruebas unitarias fallaron
+          - Revisa los logs de ejecución para más detalles
+          - Corrige los errores antes de hacer merge a main
+          
+          🔧 Por favor, revisa el código y ejecuta las pruebas localmente antes de hacer push.
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Job para deploy cuando se hace push/merge a main
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    
+    steps:
+    # Checkout del código
+    - uses: actions/checkout@v4
+    
+    # Configurar Python para pruebas finales
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    
+    # Instalar dependencias
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # Ejecutar pruebas finales en main
+    - name: Run final tests on main
+      run: |
+        echo "🧪 Ejecutando pruebas finales en la rama main..."
+        pytest test_app.py -v --tb=short
+        echo "✅ Todas las pruebas finales pasaron correctamente"
+    
+    # Configurar Docker Buildx
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    # Login a GitHub Container Registry
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    # Construir y publicar imagen Docker
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}:latest
+          ghcr.io/${{ github.repository }}:${{ github.sha }}
+        labels: |
+          org.opencontainers.image.title=Medical Model MLOps
+          org.opencontainers.image.description=Servicio médico de diagnóstico con ML simulado
+          org.opencontainers.image.url=${{ github.server_url }}/${{ github.repository }}
+          org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          org.opencontainers.image.version=${{ github.sha }}
+          org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
+          org.opencontainers.image.revision=${{ github.sha }}
+    
+    # Notificación de éxito
+    - name: Deployment Success Notification
+      run: |
+        echo "🚀 ¡Despliegue completado exitosamente!"
+        echo "📦 Imagen Docker publicada en: ghcr.io/${{ github.repository }}:latest"
+        echo "🏷️  También disponible como: ghcr.io/${{ github.repository }}:${{ github.sha }}"
+        echo "✅ El servicio médico está listo para usar"
