@@ -6,19 +6,22 @@ def predict_disease(values):
     """
     Simula la predicción de una enfermedad a partir de 3 valores.
     Los valores pueden representar, por ejemplo, niveles de glucosa, presión y temperatura.
+    Un paciente puede ser clasificado en una de estas 5 categorías: NO ENFERMO, ENFERMEDAD LEVE, ENFERMEDAD AGUDA, ENFERMEDAD CRÓNICA, ENFERMEDAD TERMINAL
     """
     try:
         glucosa, presion, temperatura = map(float, values)
         score = (glucosa + presion + temperatura) / 3
 
-        if score < 3:
+        if score < 2.5:
             return "NO ENFERMO"
-        elif score < 6:
+        elif score < 4.5:
             return "ENFERMEDAD LEVE"
-        elif score < 8:
+        elif score < 6.5:
             return "ENFERMEDAD AGUDA"
-        else:
+        elif score < 8.5:
             return "ENFERMEDAD CRÓNICA"
+        else:
+            return "ENFERMEDAD TERMINAL"
     except Exception as e:
         return f"Error en los datos: {str(e)}"
 

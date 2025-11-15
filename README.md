@@ -40,6 +40,7 @@ El sistema permite que un médico ingrese **tres valores médicos específicos**
 - `ENFERMEDAD LEVE`
 - `ENFERMEDAD AGUDA`
 - `ENFERMEDAD CRÓNICA`
+- `ENFERMEDAD TERMINAL`
 
 > ⚠️ **Nota:** Este modelo **no realiza diagnósticos reales**. Su propósito es **demostrar la construcción y despliegue de un servicio en Docker**.
 
@@ -64,12 +65,12 @@ medical-model-mlops-U2/
 - **Propósito**: Contiene toda la lógica del servicio web
 - **Tecnología**: Flask (Python)
 - **Funcionalidades**:
-  - Función `predict_disease()`: Algoritmo de clasificación médica simulado
+  - Función `predict_disease()`: Algoritmo de clasificación médica simulado con 5 categorías
   - Ruta `/`: Interfaz web HTML para interacción directa
   - Ruta `/predict`: Procesamiento de formularios web
   - Ruta `/api/predict`: API REST para integraciones
 - **Parámetros de entrada**: Glucosa, Presión arterial, Temperatura
-- **Salida**: Clasificación del estado de salud
+- **Salida**: Clasificación del estado de salud en 5 niveles de severidad
 
 #### `Dockerfile` (Configuración de Contenedor)
 - **Propósito**: Define el entorno de ejecución del servicio
@@ -247,6 +248,13 @@ curl -X POST http://localhost:5001/api/predict \
 {"prediction": "ENFERMEDAD AGUDA"}
 ```
 
+**Posibles valores de respuesta:**
+- `"NO ENFERMO"`
+- `"ENFERMEDAD LEVE"`
+- `"ENFERMEDAD AGUDA"`
+- `"ENFERMEDAD CRÓNICA"`
+- `"ENFERMEDAD TERMINAL"`
+
 ---
 
 ## 🧱 Descripción de Archivos
@@ -269,10 +277,11 @@ El sistema calcula el promedio de los tres valores médicos (glucosa, presión a
 
 | Promedio de valores médicos | Diagnóstico retornado |
 |-----------------------------|-----------------------|
-| < 3                        | `NO ENFERMO`          |
-| 3 ≤ x < 6                  | `ENFERMEDAD LEVE`     |
-| 6 ≤ x < 8                  | `ENFERMEDAD AGUDA`    |
-| ≥ 8                        | `ENFERMEDAD CRÓNICA`  |
+| < 2.5                      | `NO ENFERMO`          |
+| 2.5 ≤ x < 4.5              | `ENFERMEDAD LEVE`     |
+| 4.5 ≤ x < 6.5              | `ENFERMEDAD AGUDA`    |
+| 6.5 ≤ x < 8.5              | `ENFERMEDAD CRÓNICA`  |
+| ≥ 8.5                      | `ENFERMEDAD TERMINAL` |
 
 **Nota:** Los valores representan niveles normalizados de glucosa, presión arterial y temperatura corporal para fines de demostración.
 
