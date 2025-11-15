@@ -42,6 +42,16 @@ El sistema permite que un médico ingrese **tres valores médicos específicos**
 - `ENFERMEDAD CRÓNICA`
 - `ENFERMEDAD TERMINAL`
 
+### 📊 **Sistema de Reportes Estadísticos**
+
+El sistema incluye capacidades de **seguimiento y análisis estadístico** de las predicciones realizadas:
+
+- **Contador automático** de predicciones por cada categoría de diagnóstico
+- **Historial detallado** de las últimas 5 predicciones realizadas
+- **Registro temporal** con fecha y hora de cada predicción
+- **Interfaz web** intuitiva para visualización de estadísticas
+- **API REST** para integración con sistemas externos de reporting
+
 > ⚠️ **Nota:** Este modelo **no realiza diagnósticos reales**. Su propósito es **demostrar la construcción y despliegue de un servicio en Docker**.
 
 ---
@@ -66,11 +76,14 @@ medical-model-mlops-U2/
 - **Tecnología**: Flask (Python)
 - **Funcionalidades**:
   - Función `predict_disease()`: Algoritmo de clasificación médica simulado con 5 categorías
+  - Función `log_prediction()`: Sistema de registro automático de predicciones
   - Ruta `/`: Interfaz web HTML para interacción directa
   - Ruta `/predict`: Procesamiento de formularios web
+  - Ruta `/stats`: Interfaz web de estadísticas y reportes
   - Ruta `/api/predict`: API REST para integraciones
+  - Ruta `/api/stats`: API REST para obtener estadísticas en JSON
 - **Parámetros de entrada**: Glucosa, Presión arterial, Temperatura
-- **Salida**: Clasificación del estado de salud en 5 niveles de severidad
+- **Salida**: Clasificación del estado de salud en 5 niveles de severidad + registro estadístico
 
 #### `Dockerfile` (Configuración de Contenedor)
 - **Propósito**: Define el entorno de ejecución del servicio
@@ -257,6 +270,59 @@ curl -X POST http://localhost:5001/api/predict \
 
 ---
 
+### 📊 Opción 3: Sistema de Estadísticas y Reportes
+
+El sistema incluye funcionalidades para el análisis de las predicciones realizadas.
+
+#### 🌐 Interfaz Web de Estadísticas
+
+Accede a la interfaz de estadísticas en:  
+👉 [http://localhost:5001/stats](http://localhost:5001/stats)
+
+Esta interfaz muestra:
+- **Total de predicciones** realizadas
+- **Distribución por categorías** de diagnóstico
+- **Últimas 5 predicciones** con detalles completos
+- **Fecha y hora** de la última predicción
+
+#### 🔗 API REST de Estadísticas
+
+Para obtener estadísticas en formato JSON, utiliza el endpoint `/api/stats`:
+
+```bash
+curl -X GET http://localhost:5001/api/stats
+```
+
+#### Respuesta del API de estadísticas:
+
+```json
+{
+  "total_predictions": 12,
+  "predictions_by_category": {
+    "NO ENFERMO": 3,
+    "ENFERMEDAD LEVE": 4,
+    "ENFERMEDAD AGUDA": 2,
+    "ENFERMEDAD CRÓNICA": 2,
+    "ENFERMEDAD TERMINAL": 1
+  },
+  "last_predictions": [
+    {
+      "timestamp": "2025-11-14T10:30:45.123456",
+      "values": [2.1, 3.5, 2.8],
+      "result": "NO ENFERMO"
+    },
+    {
+      "timestamp": "2025-11-14T10:35:12.789012",
+      "values": [7.2, 8.1, 9.0],
+      "result": "ENFERMEDAD TERMINAL"
+    }
+  ],
+  "last_prediction_date": "2025-11-14T10:35:12.789012"
+}
+```
+
+---
+
 ## 🧱 Descripción de Archivos
 
 ### `app.py`
@@ -289,10 +355,22 @@ El sistema calcula el promedio de los tres valores médicos (glucosa, presión a
 
 ## 🧩 Posibles Extensiones
 
+### 🎯 Mejoras del Modelo
 - Conectar el servicio con un modelo real de ML entrenado (archivo `.pkl` o `.onnx`).
 - Implementar autenticación para acceso médico.
-- Guardar registros de consultas en una base de datos.
+- Guardar registros de consultas en una base de datos persistente (PostgreSQL, MongoDB).
+
+### 📊 Expansión de Estadísticas
+- **Gráficos interactivos** con Chart.js o D3.js para visualización avanzada
+- **Exportación de reportes** en formato PDF o Excel
+- **Filtros por fecha** para análisis temporal de predicciones
+- **Alertas automáticas** cuando se detecten patrones críticos
+- **Dashboard médico** con métricas en tiempo real
+
+### 🚀 Infraestructura
 - Desplegar el servicio con Docker Compose o en Kubernetes.
+- Implementar cache con Redis para mejorar rendimiento de estadísticas.
+- Configurar backups automáticos del historial de predicciones.
 
 ---
 
