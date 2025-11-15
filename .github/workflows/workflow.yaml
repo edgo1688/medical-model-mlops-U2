@@ -127,8 +127,8 @@ jobs:
         context: .
         push: true
         tags: |
-          ghcr.io/${{ github.repository }}:latest
-          ghcr.io/${{ github.repository }}:${{ github.sha }}
+          ghcr.io/${{ github.repository_owner }}/medical-model-mlops-u2:latest
+          ghcr.io/${{ github.repository_owner }}/medical-model-mlops-u2:${{ github.sha }}
         labels: |
           org.opencontainers.image.title=Medical Model MLOps
           org.opencontainers.image.description=Servicio médico de diagnóstico con ML simulado
@@ -142,6 +142,6 @@ jobs:
     - name: Deployment Success Notification
       run: |
         echo "🚀 ¡Despliegue completado exitosamente!"
-        echo "📦 Imagen Docker publicada en: ghcr.io/${{ github.repository }}:latest"
-        echo "🏷️  También disponible como: ghcr.io/${{ github.repository }}:${{ github.sha }}"
+        echo "📦 Imagen Docker publicada en: ghcr.io/${{ github.repository_owner }}/medical-model-mlops-u2:latest"
+        echo "🏷️  También disponible como: ghcr.io/${{ github.repository_owner }}/medical-model-mlops-u2:${{ github.sha }}"
         echo "✅ El servicio médico está listo para usar"
